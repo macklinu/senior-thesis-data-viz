@@ -40,7 +40,16 @@ void getSunriseSunset() {
 
 void draw() {
   // t = current moment in time
-  int t = timeInSeconds(hour(), minute(), second());
+  //  int t = timeInSeconds(hour(), minute(), second());
+  int h = 0;
+  int m = 15;
+  int s = 23;
+  int t = timeInSeconds(h, m, s);
+  /*
+  int h = hour();
+  int m = minute();
+  int s = second();
+  */
   // determine if it's morning, afternoon, or night
   if (t >= sunrise && t < timeInSeconds(12, 0, 0)) {
     morning = true;
@@ -50,12 +59,12 @@ void draw() {
   else if (t > timeInSeconds(12, 0, 0) && t < sunset) {
     morning = false;
     afternoon = true;
-    night = false; 
+    night = false;
   }
   else if (t < sunrise || t > sunset) {
     morning = false;
     afternoon = false;
-    night = true; 
+    night = true;
   }
   // println(morning + "\t" + afternoon + "\t" + night);
   // determining whether the sun is in the sky
@@ -89,7 +98,7 @@ void draw() {
   stroke(330);
   line(map(t, 0, tMax, 0, width), height/2, map(t, 0, tMax, 0, width), height);
   fill(330);
-  text(":" + nf(minute(), 2) + ":" + nf(second(), 2), map(t, 0, tMax, 0, width) + 5, height/1.3);
+  text(":" + nf(m, 2) + ":" + nf(s, 2), map(t, 0, tMax, 0, width) + 5, height/1.3);
   stroke(0, 360, 360);
   line(map(sunrise, 0, tMax, 0, width), height/2, map(sunrise, 0, tMax, 0, width), height);
   // line(map(timeInSeconds(srHr, srMin, 0), 0, 86400, 0, width), height/2, map(timeInSeconds(ssHr, ssMin, 0), 0, 86400, 0, width), height/2);
