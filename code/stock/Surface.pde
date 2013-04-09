@@ -13,6 +13,8 @@ class Surface {
 
   float dataMin = MAX_FLOAT;
   float dataMax = MIN_FLOAT;
+  
+  boolean touch;
 
   Surface() {
     surface = new ArrayList<Vec2>();
@@ -36,7 +38,7 @@ class Surface {
     }
 
     // step through the stock data and create a surface from it
-    for (int i = google.getRowCount() - 1; i > 0; i--) {
+    for (int i = google.getRowCount() - 1; i > 0; i-=30) {
       if (i < google.getRowCount() - 1) {
         float x = map(i, 0, google.getRowCount(), -40, width+40);
         float y = map(google.getFloat(i, 4), dataMin, dataMax, 400, 100);
@@ -64,12 +66,12 @@ class Surface {
     // want to specify frictions, restitution, etc.
     body.createFixture(chain, 1);
   }
-  
-  boolean getCollision(float mx, float my, float range) {
+
+  void getCollision(float mx, float my, float w, float h) {
     for (Vec2 v: surface) {
-      if (dist(mx, my, v.x, v.y) < range) return true;
+      if (mx >= v.x && mx <= v.x+w && my >= v.y && my <= v.y+h) touch = true;
+      else touch = false;
     }
-    return false;
   }
 
   // A simple function to just draw the edge chain as a series of vertex points

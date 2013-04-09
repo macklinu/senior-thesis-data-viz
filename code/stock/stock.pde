@@ -53,7 +53,8 @@ void draw() {
   }
 
   // Draw the surface
-  if (surface.getCollision(x, y, 3.2)) c = color(0, 255, 255);
+  surface.getCollision(x, y, 40, 20); 
+  if (surface.touch) c = color(0, 255, 255);
   else c = color(0);
   surface.display();
   

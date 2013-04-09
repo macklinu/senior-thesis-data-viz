@@ -41,15 +41,18 @@ void getSunriseSunset() {
 void draw() {
   // t = current moment in time
   //  int t = timeInSeconds(hour(), minute(), second());
+  /*
   int h = 0;
   int m = 15;
   int s = 23;
-  int t = timeInSeconds(h, m, s);
-  /*
+  */
   int h = hour();
   int m = minute();
   int s = second();
-  */
+  int t = timeInSeconds(h, m, s);
+  
+  
+  
   // determine if it's morning, afternoon, or night
   if (t >= sunrise && t < timeInSeconds(12, 0, 0)) {
     morning = true;
@@ -91,7 +94,7 @@ void draw() {
     }
     stroke(220);
     line(map(i, 0, 24, 0, width), height/2, map(i, 0, 24, 0, width), height);
-    fill(50);
+    fill(300);
     if (i < 13) text(nf(i, 2), map(i, 0, 24, 0, width), height/3);
     else text(nf(i - 12, 2), map(i, 0, 24, 0, width), height/3);
   }
@@ -134,7 +137,7 @@ String time (int ts) {
 }
 
 void mousePressed() {
-  // save(timestamp() + ".png");
+  save(timestamp() + ".png");
   int ts = (int) map(mouseX, 0, width, 0, tMax);
   print(time(ts) + "\t");
   if (ts < (86400/2)) println("morning");
