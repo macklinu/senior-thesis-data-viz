@@ -1,2 +1,5 @@
 .DS_Store
 *.png
+*.jpg
+*.zip
+code/*/build-tmp/

@@ -1,6 +1,6 @@
 Orb orb;
 PVector velocity;
-float gravity = .05, damping = 0.8;
+float gravity = .2, damping = 0.8;
 int segments;
 Ground[] ground;
 float[] peakHeights;
@@ -16,6 +16,11 @@ CSV google;
 float dataMin = MAX_FLOAT;
 float dataMax = MIN_FLOAT;
 
+boolean touch = false;
+
+int start = 0;
+int current = 40;
+
 void setup() {
   size(1280, 720);
   smooth();
@@ -23,11 +28,12 @@ void setup() {
   h = 20;
   colorMode(HSB, 360);
 
-  orb = new Orb(50, 50, 3);
+  orb = new Orb(200, 0, 10);
   velocity = new PVector(.5, 0);
 
   google = new CSV(dataPath("GOOG.csv")); // load the stock file
-  segments = google.getRowCount()-1;
+  segments = (google.getRowCount()-1);
+  println(segments);
   ground = new Ground[segments];
   peakHeights = new float[segments+1];
   // find the min and max data values
@@ -43,19 +49,20 @@ void setup() {
   /* Float value required for segment width (segs)
    calculations so the ground spans the entire 
    display window, regardless of segment number. */
-  float segs = segments;
+  float segs = segments/32;
   for (int i=0; i<segments; i++) {
     ground[i]  = new Ground(width/segs*i, peakHeights[i], 
     width/segs*(i+1), peakHeights[i+1]);
   }
 
   c = color(0, 0, 0);
+  // noCursor();
 }
 
 void draw() {
 
   background(300);
-
+  translate(0, -300);
   // Move orb
   orb.x += velocity.x;
   velocity.y += gravity;
@@ -67,22 +74,23 @@ void draw() {
 
   fill(127);
   beginShape();
-  for (int i=0; i<segments; i++) {
+  for (int i=start; i<current; i++) {
     vertex(ground[i].x1, ground[i].y1);
     vertex(ground[i].x2, ground[i].y2);
   }
-  vertex(ground[segments-1].x2, height);
-  vertex(ground[0].x1, height);
+  vertex(ground[current-start].x2, height + dataMin);
+  vertex(ground[start].x1, height + dataMin);
   endShape(CLOSE);
 
   // Draw orb
   noStroke();
-  fill(200);
+  if (touch) fill(0, 360, 360);
+  else fill(250);
   ellipse(orb.x, orb.y, orb.r*2, orb.r*2);
 
   // Collision detection
   checkWallCollision();
-  for (int i=0; i<segments; i++) {
+  for (int i=start; i<current; i++) {
     checkGroundCollision(ground[i]);
   }
 }
@@ -129,6 +137,8 @@ void checkGroundCollision(Ground groundSegment) {
     // bounce and slow down orb
     velocityYTemp *= -1.0;
     velocityYTemp *= damping;
+    touch = true;
+    // println("TOUCH");
   }
 
   // Reset ground, velocity and orb
@@ -138,6 +148,7 @@ void checkGroundCollision(Ground groundSegment) {
   velocity.y = cosine * velocityYTemp + sine * velocityXTemp;
   orb.x = groundSegment.x + deltaX;
   orb.y = groundSegment.y + deltaY;
+  // touch = false;
 }
 
 void keyPressed() {
@@ -146,6 +157,8 @@ void keyPressed() {
     x = constrain(x, 0, width); // keep x in range
   }
   if (keyCode == RIGHT) { 
+    start++;
+    current++;
     x+= 3.2;
     x = constrain(x, 0, width); // keep x in range
   }
