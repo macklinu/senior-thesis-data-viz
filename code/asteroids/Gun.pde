@@ -1,6 +1,7 @@
 class Gun {
   // ArrayList<Bullet> bullets = new ArrayList<Bullet>();
   CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<Bullet>();
+  PVector location; // current position on screen
   float x, y, w, h;
   float angle, a;
   float r;
@@ -16,6 +17,8 @@ class Gun {
 
   void rot(float a) {
     this.a+=a;
+    if (this.a > 360) this.a %= 360.;
+    if (this.a < 0) this.a += 360.;
   }
   
   void moveX(float mx) {
@@ -49,7 +52,8 @@ class Gun {
   }
   
   void fire() {
-    bullets.add(new Bullet((x + (sin(r)*h/2)), (y + (cos(r)*-h/2))));
+    println((abs(a) % 360.));
+    bullets.add(new Bullet((x + (sin(r)*h/2)), (y + (cos(r)*-h/2)), (abs(a) % 360.)));
   }
   
   CopyOnWriteArrayList<Bullet> getBullets() { // = new CopyOnWriteArrayList<Bullet>();

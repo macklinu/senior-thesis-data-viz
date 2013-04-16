@@ -7,6 +7,9 @@
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList; 
+import controlP5.*;
+
+ControlP5 cp5;
 
 Twitter tw;
 Gun gun;
@@ -22,8 +25,9 @@ int result;
 
 void setup() {
   size(800, 600);
-  noStroke();
+  smooth();
   imageMode(CENTER);
+  cp5 = new ControlP5(this);
 
   tw = new Twitter();
   gun = new Gun(width/2, height/2);
@@ -70,39 +74,38 @@ void draw() {
     gun.rot(PI); 
     break;
   }
+  // move and draw the gun
   gun.update();
   gun.display();
+  // iterate through on screen asteroids
   Iterator<Asteroid> it = asteroids.iterator();
-  CopyOnWriteArrayList<Asteroid> tempA = new CopyOnWriteArrayList<Asteroid>();
-  CopyOnWriteArrayList<Bullet> tempB = new CopyOnWriteArrayList<Bullet>();
-  while (it.hasNext ()) {
+  CopyOnWriteArrayList<Asteroid> deadAsteroids = new CopyOnWriteArrayList<Asteroid>(); // temp dead asteroid pool
+  CopyOnWriteArrayList<Bullet> deadBullets = new CopyOnWriteArrayList<Bullet>(); // temp dead bullet pool
+  while (it.hasNext ()) { // while there are asteroids
     Asteroid a = it.next();
-    a.display();
+    a.display(); // draw it
+    // check each bullet for collisions
     for (Bullet b : gun.getBullets()) {
       checkCollision(a, b);
-      if (b.isOffScreen()) {
-        tempB.add(b);
-      }
-      if (a.isHit()) {
-        tempA.add(a);
-        tempB.add(b);
-      }
+      if (b.isOffScreen()) deadBullets.add(b); 
+      if (a.isHit()) deadBullets.add(b);
     }
+    if (a.isDead()) deadAsteroids.add(a);
+  } // end of while loop
+  if (deadAsteroids.size() > 0) {
+    asteroids.removeAll(deadAsteroids);
+    deadAsteroids = new CopyOnWriteArrayList<Asteroid>();
   }
-  if (tempA.size() > 0) {
-    asteroids.removeAll(tempA);
-    tempA = new CopyOnWriteArrayList<Asteroid>();
-    
-  }
-  if (tempB.size() > 0) {
-    println("removed " + tempB.size() + " bullet(s) from screen: " + tempB);
-    gun.getBullets().removeAll(tempB);
-    tempB = new CopyOnWriteArrayList<Bullet>();
+  if (deadBullets.size() > 0) {
+    // println("removed " + deadBullets.size() + " bullet(s) from screen: " + deadBullets);
+    gun.getBullets().removeAll(deadBullets);
+    //deadBullets = new CopyOnWriteArrayList<Bullet>();
   }
 }
 
 void keyPressed() {
-  if (key == ' ') gun.fire();
+  if (key == ' ') gun.fire(); // fire the gun
+  // deal with keyboard controls (for now)
   switch(key) {
     case('w'):
     case('W'):
@@ -161,8 +164,11 @@ void keyReleased() {
 }
 
 void checkCollision(Asteroid a, Bullet b) {
-  if (dist(a.x, a.y, b.location.x, b.location.y) < a.w/2) { 
-    a.hit(true);
+  if (dist(a.x, a.y, b.location.x, b.location.y) < a.w/2) { // works with an ellipse
+    a.hit(true); // asteroid was hit
   }
 }
 
+void controlEvent(ControlEvent theEvent) {
+  println("got a control event from controller with id "+theEvent.getController().getId());
+}

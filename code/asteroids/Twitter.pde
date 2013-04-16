@@ -12,7 +12,7 @@ static String AccessTokenSecret = "kNPONdyWCPFDLEYP0jfBgsW8FwFPYZBgVrEg01XzwI";
 class Twitter {
 
   // if you enter keywords here it will filter, otherwise it will sample
-  String keywords[] = { 
+  String[] keywords = { 
     "Ann Arbor", "Detroit"
   };
   PImage img;
@@ -29,7 +29,7 @@ class Twitter {
   }
 
   void display() {
-    if (imageLoaded) image(img, width/2, height/2);
+    // if (imageLoaded) image(img, width/2, height/2);
   }
 
   // Initial connection
@@ -47,9 +47,10 @@ class Twitter {
   // This listens for new tweet
   StatusListener listener = new StatusListener() {
     public void onStatus(Status status) {
-      println("NEW STATUS\n");
-      println("@" + status.getUser().getScreenName() + " - " + status.getText() + "\n");
-      asteroids.add(new Asteroid(random(width/2, width/2-100), random(height/2-100, 0), random(30, 80)));
+      // println("NEW STATUS\n");
+      // println("@" + status.getUser().getScreenName() + " - " + status.getText() + "\n");
+      String tweet = "@" + status.getUser().getScreenName() + " - " + status.getText();
+      if (tweet != null) asteroids.add(new Asteroid(random(100, width-100), random(100, height-100), status.getText().length(), tweet));
 
       String imgUrl = null;
       String imgPage = null;
