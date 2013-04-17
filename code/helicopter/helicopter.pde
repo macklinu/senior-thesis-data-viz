@@ -4,6 +4,9 @@ import geomerative.*;
 import org.apache.batik.svggen.font.table.*;
 import org.apache.batik.svggen.font.*;
 import processing.serial.*;
+import controlP5.*;
+
+ControlP5 cp5;
 
 Button[] buttons = new Button[12];
 String[] buttonID = {
@@ -36,8 +39,10 @@ void setup() {
   smooth();
   colorMode(HSB);
   RG.init(this); // initialize Geomerative library
-  createBarriers("GOOG.csv", "GOOG.csv");
-  arduino = new Serial(this, Serial.list()[4], 57600);
+  cp5 = new ControlP5(this);
+  cp5.addFrameRate().setInterval(10).setPosition(0,height - 10);
+  thread("loadData");
+  // arduino = new Serial(this, Serial.list()[4], 57600);
   for (int i = 0; i < buttons.length; i++) {
     buttons[i] = new Button(buttonID[i]);
   }
@@ -96,9 +101,6 @@ void draw() {
        }
        */
     }
-
-    fill(255);
-    text(frameRate, 10, 10);
   }
 }
 
@@ -133,6 +135,10 @@ String timestamp() {
           + nf(minute(), 2)
             + nf(second(), 2);
   return currentTime;
+}
+
+void loadData() {
+  createBarriers("GOOG.csv", "GOOG.csv");
 }
 
 // each incoming serial message...

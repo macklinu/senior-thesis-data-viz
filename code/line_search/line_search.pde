@@ -1,20 +1,19 @@
-import java.util.Map;
-import java.util.List;
-import java.util.Iterator;
+import java.util.*; // map, list, iterator, date
+import java.text.*;
 import controlP5.*;
 
 ControlP5 cp5;
 ListBox list;
+Group group;
 
+String dataFile = "sp500hst-small.csv";
 String[] lines;
 String[][] csv;
 int csvWidth = 0;
 String filepath;
 float current = 0;
-// This will keep track of whether the thread is finished
-boolean finished = false;
-// And how far along
-float percent = 0;
+boolean finished = false; // keep track of whether the thread is finished
+float percent = 0; // how far along
 
 Map<String, DataChunk> multiMap = new HashMap<String, DataChunk>();
 float[] data;
@@ -22,23 +21,39 @@ float[] x, y;
 float min, max;
 int[] curDays;
 
+int currentItem = -1; // both -1
+int activeItem = -1;
+
+int visibleItems; // lines.length - 1
+color listBgColor = color(255, 128);
+color listActiveColor = color(120, 50, 100);
+color listCurrentColor = color(0, 50, 100);
+
 void setup() {
   size(640, 360);
+  colorMode(HSB);
   smooth();
   cp5 = new ControlP5(this);
+  // create list box and set attributes
+  /* group = cp5.addGroup("companies group")
+    .setPosition(500, 100)
+      .setBackgroundHeight(100)
+        .setBackgroundColor(color(255, 50)); */
   list = cp5.addListBox("companies")
     .setPosition(15, 15*2)
       .setSize(100, height-15)
         .setItemHeight(15)
           .setBarHeight(15)
-            .setColorBackground(color(255, 128))
+            .setColorBackground(listBgColor)
               .setColorActive(color(0))
-                .setColorForeground(color(40, 100, 0));
+                .setColorForeground(color(40, 100, 100));
   list.captionLabel().set("Companies");
   list.captionLabel().style().marginTop = 3;
   list.valueLabel().style().marginTop = 3;
-  // Spawn the thread!
+  // create the thread
   thread("loadData");
+  list.hide();
+  // group.hide();
 }
 
 void draw() {
@@ -49,12 +64,11 @@ void draw() {
   // This would not be necessary in a sketch where you wanted to load data in the background
   // and hide this from the user, allowing the draw() loop to simply continue
   if (!finished) {
-    list.hide();
     stroke(255);
     noFill();
     rect(width/2-150, height/2, 300, 10);
     fill(255);
-    // The size of the rectangle is mapped to the percentage completed
+    // size of the rectangle is mapped to the percentage completed
     float w = map(percent, 0, 1, 0, 300);
     rect(width/2-150, height/2, w, 10);
     textSize(14);
@@ -64,6 +78,8 @@ void draw() {
   } 
   else {
     list.show();
+    // group.show();
+    if (activeItem != -1) list.getItem(activeItem).setColorBackground(listActiveColor);
     for (int i = 0 ; i < x.length - 1; i++) {
       noStroke();
       fill(255, 100);
@@ -73,6 +89,7 @@ void draw() {
 }
 
 // asynchronous data loading
+// load all of the data
 void loadData() {
   finished = false;
   percent = 0;
@@ -80,7 +97,8 @@ void loadData() {
   println("Loading...");
   float start = millis();
 
-  lines = loadStrings(dataPath("sp500hst-small.csv")); // load CSV file
+  lines = loadStrings(dataPath(dataFile)); // load CSV file
+  //  visibleItems = lines.length - 1;
   // split by comma delimiter
   for (int i = 0; i < lines.length; i++) {
     String [] chars = split(lines[i], ",");
@@ -89,22 +107,27 @@ void loadData() {
     }
   }
   // create a 2D array based on the size of the csv row length and column length
-  csv = new String [lines.length][csvWidth];
-  String testCompany = "";
+  csv = new String[lines.length][csvWidth];
+  String testCompany = ""; // check for a new company
+  char testLetter = ' '; // check for a new letter
   int count = 0;
   ArrayList<String> dates = new ArrayList<String>(); // create values arraylist
   ArrayList<Float> values = new ArrayList<Float>(); // create values arraylist
   for (int i = 0; i < lines.length; i++) {
     percent = float(i)/lines.length;
-    String [] temp = new String [lines.length];
+    String[] temp = new String[lines.length];
     temp = split(lines[i], ",");
     String tempCompany = temp[1];
+    char tempLetter = tempCompany.charAt(0);
     if (!tempCompany.equals(testCompany)) {
-      // buttons.add(new Button(tempCompany, 0, count++ * 10));
       dates = new ArrayList<String>(); // create values arraylist
       values = new ArrayList<Float>(); // create values arraylist
+      // if there is a new letter
+      // create a new list
+      if (tempLetter != testLetter) { 
+        println("new letter: " + tempLetter);
+      }
       ListBoxItem lbi = list.addItem(tempCompany, count++);
-      // list.captionLabel().setFont(createFont("Roboto", 10));
       dates.add(temp[0]); // populate arraylist with first value
       values.add(float(temp[4])); // populate arraylist with first value
     }
@@ -113,10 +136,11 @@ void loadData() {
       values.add(float(temp[4])); // populate arraylist with first value
     }
     testCompany = temp[1];
+    testLetter = tempCompany.charAt(0);
     DataChunk d = new DataChunk(dates, values);
     multiMap.put(tempCompany, d); // add datachunk to multimap
   }
-
+  visibleItems = list.getListBoxItems().length-1;
   float now = millis() - start;
   println("load time: " + nf(now/1000, 1, 2) + "s");
   setDataDisplay("A");
@@ -125,18 +149,49 @@ void loadData() {
 }
 
 void setDataDisplay(String company) {
-  DataChunk d = multiMap.get(company);
+  DataChunk d = multiMap.get(company); // create a temporary datachunk of selected company
   float[] starter = d.getValues();
-  // curDays = new int[starter.length];
   x = y = new float[starter.length];
   float[] sorted = sort(starter);
   min = sorted[0];
   max = sorted[sorted.length - 1];
   curDays = d.getDIY();
-  // data = starter;
   for (int i = 0; i < starter.length - 1; i++) {
-    x[i] = map(curDays[i], 0, 365, 200, 600);
+    x[i] = map(curDays[i], 0, 365, 200, 600); // number of days moved
     y[i] = map(starter[i], min, max, 300, 50);
+  }
+}
+
+void keyPressed() {
+  if (finished) {
+    switch(keyCode) {
+      // move up the list
+      case(UP):
+      list.getItem(currentItem).setColorBackground(listBgColor);
+      list.scroll((float)currentItem/(list.getListBoxItems().length - visibleItems));
+      currentItem--;
+      currentItem = constrain(currentItem, 0, list.getListBoxItems().length-1 );
+      list.getItem(currentItem).setColorBackground(listCurrentColor);
+      break;
+      // move down the list
+      case(DOWN):
+      list.getItem(max(0, currentItem)).setColorBackground(listBgColor);
+      currentItem++;
+      currentItem = constrain(currentItem, 0, list.getListBoxItems().length-1);
+      list.scroll( (float)currentItem / ( list.getListBoxItems().length- visibleItems )  );
+      list.getItem(currentItem).setColorBackground(listCurrentColor);
+      break;
+      // press ENTER to select new company
+      case(ENTER):
+      String company = list.getItem(currentItem).getName();
+      // set the background color of all items to the 
+      for (int i = 0; i < visibleItems; i++) {
+        list.getItem(i).setColorBackground(listBgColor);
+      }
+      activeItem = currentItem; // set the active item as the one selected
+      setDataDisplay(company); // display the selected company's data
+      break;
+    }
   }
 }
 

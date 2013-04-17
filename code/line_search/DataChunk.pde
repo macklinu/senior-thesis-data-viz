@@ -1,5 +1,11 @@
-import java.util.*;
-import java.text.*;
+/**
+ * DataChunk
+ *
+ * Stores two pieces of information
+ * 1) an ArrayList of dates (String)
+ * 2) an ArrayList of stock values from those dates (float)
+ *
+ */
 
 class DataChunk {
   String[] dates;
@@ -7,6 +13,7 @@ class DataChunk {
   int[] dayInYear;
 
   DataChunk(ArrayList<String> d, ArrayList<Float> v) {
+    // initialize 
     dates = new String[d.size()];
     values = new float[v.size()];
     dayInYear = new int[d.size()];
@@ -35,7 +42,7 @@ class DataChunk {
   float[] getValues() {
     return values;
   }
-  
+
   int[] getDIY() {
     return dayInYear;
   }
