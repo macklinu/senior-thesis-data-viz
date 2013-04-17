@@ -6,7 +6,7 @@ ControlP5 cp5;
 ListBox list;
 Group group;
 
-String dataFile = "sp500hst-small.csv";
+String dataFile = "sp500hst-ac.csv";
 String[] lines;
 String[][] csv;
 int csvWidth = 0;
@@ -35,10 +35,10 @@ void setup() {
   smooth();
   cp5 = new ControlP5(this);
   // create list box and set attributes
-  /* group = cp5.addGroup("companies group")
+  group = cp5.addGroup("companies group")
     .setPosition(500, 100)
       .setBackgroundHeight(100)
-        .setBackgroundColor(color(255, 50)); */
+        .setBackgroundColor(color(255, 50));
   list = cp5.addListBox("companies")
     .setPosition(15, 15*2)
       .setSize(100, height-15)
@@ -119,14 +119,21 @@ void loadData() {
     temp = split(lines[i], ",");
     String tempCompany = temp[1];
     char tempLetter = tempCompany.charAt(0);
+    // DropdownList ddl;
     if (!tempCompany.equals(testCompany)) {
       dates = new ArrayList<String>(); // create values arraylist
       values = new ArrayList<Float>(); // create values arraylist
       // if there is a new letter
-      // create a new list
+      // create a new dropdown list
+      // this doesn't work yet
+      /*
       if (tempLetter != testLetter) { 
-        println("new letter: " + tempLetter);
-      }
+       ddl = createDDL(str(tempLetter), count);
+       ddl.addItem(str(tempLetter), count);
+       // ddl.setGroup(group);
+       println("new letter: " + tempLetter);
+       }
+       */
       ListBoxItem lbi = list.addItem(tempCompany, count++);
       dates.add(temp[0]); // populate arraylist with first value
       values.add(float(temp[4])); // populate arraylist with first value
@@ -146,6 +153,24 @@ void loadData() {
   setDataDisplay("A");
   // The thread is completed!
   finished = true;
+}
+
+DropdownList createDDL(String letter, int count) {
+  // a convenience function to customize a DropdownList
+  DropdownList ddl = cp5.addDropdownList(letter)
+    .setPosition(500, count*15 + 150)
+      .actAsPulldownMenu(false);
+  ddl.setBackgroundColor(color(190));
+  ddl.setItemHeight(15);
+  ddl.setBarHeight(15);
+  ddl.captionLabel().set(letter);
+  ddl.captionLabel().style().marginTop = 3;
+  ddl.captionLabel().style().marginLeft = 3;
+  ddl.valueLabel().style().marginTop = 3;
+  //ddl.scroll(0);
+  ddl.setColorBackground(color(60));
+  ddl.setColorActive(color(255, 128));
+  return ddl;
 }
 
 void setDataDisplay(String company) {
