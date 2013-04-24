@@ -1,12 +1,12 @@
 class Bullet {
   PVector location;
   PVector velocity;
-  float d;
+  float r;
   float speed;
   float dx, dy;
 
   Bullet(float lx, float ly, float angle) {
-    speed = 3;
+    speed = 5;
     if (angle >= 0 && angle <= 90) {
       dx = map(angle, 0, 90, 0, 1);
       dy = map(angle, 0, 90, -1, 0);
@@ -25,8 +25,7 @@ class Bullet {
     }
     location = new PVector(lx, ly);
     velocity = new PVector(dx * speed, dy * speed);
-    // println("new bullet created" + "\t" + lx + ", " + ly);
-    d = 10;
+    r = 5;
   }
 
   void update() {
@@ -37,12 +36,12 @@ class Bullet {
     // Display circle at x location
     //noStroke(0);
     fill(175, 150);
-    ellipse(location.x, location.y, d, d);
+    ellipse(location.x, location.y, r*2, r*2);
   }
 
   boolean isOffScreen() {
-    if (location.x+d/2 < 0 || location.x+d/2 > width
-      || location.y+d/2 < 0 || location.y+d/2 > height) return true;
+    if (location.x+r < 0 || location.x+r > width
+      || location.y+r < 0 || location.y+r > height) return true;
     else return false;
   }
 }

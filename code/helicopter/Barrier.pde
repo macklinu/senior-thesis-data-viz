@@ -4,38 +4,57 @@ class Barrier {
   float[] allPoints;
   RPoint[] barrierPoints;
 
-  int numSegments = 42;
+  int numSegments;
   int totalSegments;
   int offset = 0;
+  int speed;
   float rangeMin, rangeMax;
   int colNum = 4;
   float dataMin = MAX_FLOAT;
   float dataMax = MIN_FLOAT;
+  boolean nearEnd = false;
+  String id;
+  String[] dates;
 
-  Barrier(String filepath, float rangeMin, float rangeMax) {
+  Barrier(String filepath, float rangeMin, float rangeMax, String type) {
+    if (type.equals("data")) {
+      numSegments = 320 + 2;
+      speed = 4;
+    }
+    else {
+      numSegments = 80 + 2;
+      speed = 6;
+    }
     this.rangeMin = rangeMin;
     this.rangeMax = rangeMax;
-    csv = new CSV(filepath); // create a csv object
+    csv = new CSV(dataPath(filepath)); // create a csv object
+    id = split(filepath, '.')[0];
     totalSegments = csv.getRowCount() - 1; //
     barrierPoints = new RPoint[numSegments];
     allPoints = new float[totalSegments];
+    dates = new String[totalSegments];
     minMax(colNum); // find min and max of column 4 in the dataset
     for (int i = 0; i < totalSegments; i++) {
-      allPoints[i] = map(csv.getFloat(i, colNum), dataMin, dataMax, rangeMin, rangeMax); // reverse logic for screen coordinates
+      allPoints[i] = map(csv.getFloat(i, colNum), dataMin, dataMax, rangeMax, rangeMin); // reverse logic for screen coordinates
+      dates[i] = csv.getString(i, 0);
     }
+    allPoints = reverse(allPoints);
+    dates = reverse(dates);
     createBarrier();
-    // println(allPoints);
   }
 
   void update() {
-    offset+=1;
-    createBarrier();
+    if (numSegments + offset > totalSegments - speed - 1) { 
+      nearEnd = true;
+    }
+    if (!nearEnd) {
+      offset+=speed;
+      createBarrier();
+    }
   }
 
   void display() {
-    fill(150, 150);
-    noStroke();
-    RG.shape(barrier);
+    // RG.shape(barrier);
   }
 
   void minMax(int col) {
@@ -53,9 +72,13 @@ class Barrier {
   int getNumSegments() { 
     return numSegments;
   }
-  
+
   RShape getShape() {
     return barrier;
+  }
+  
+  boolean nearEnd() {
+    return nearEnd;
   }
 }
 

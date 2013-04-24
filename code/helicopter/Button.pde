@@ -3,10 +3,6 @@ class Button {
   int reading, lastReading; // current and previous button press readings
   long time, timeBetween; // to determine
 
-  //--------------------------------------
-  //  CONSTRUCTOR
-  //--------------------------------------
-
   Button(String id) {
     this.id = id;
     time = millis();
