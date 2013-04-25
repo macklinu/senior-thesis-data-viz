@@ -16,11 +16,12 @@ class Ceiling extends Barrier {
   }
   
   void display() {
-    stroke(0);
+    // stroke(0);
+    noStroke();
     fill(160, 200, 100, 150);
     RG.shape(barrier);
     // textSize(20);
-    text(id, 20, 20);
+    text(id, 10, 20);
   }
   
 }

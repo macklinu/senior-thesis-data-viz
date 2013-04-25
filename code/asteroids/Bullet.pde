@@ -25,7 +25,7 @@ class Bullet {
     }
     location = new PVector(lx, ly);
     velocity = new PVector(dx * speed, dy * speed);
-    r = 5;
+    r = 3;
   }
 
   void update() {
@@ -35,7 +35,8 @@ class Bullet {
   void display() {
     // Display circle at x location
     //noStroke(0);
-    fill(175, 150);
+    stroke(255);
+    noFill();
     ellipse(location.x, location.y, r*2, r*2);
   }
 

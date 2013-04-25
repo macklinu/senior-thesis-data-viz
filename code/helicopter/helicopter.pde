@@ -67,7 +67,7 @@ void setup() {
             .setBarHeight(24)
               .setColorBackground(color(0, 128))
                 .setColorActive(color(0))
-                  .setColorForeground(#7EC7E3); //color(63, 174, 216, 100));
+                  .setColorForeground(#28B5EA); //color(63, 174, 216, 100));
   l.captionLabel().toUpperCase(false);
   l.captionLabel().set("Select a game");
   l.captionLabel().setColor(#3FAED8);
@@ -94,7 +94,7 @@ void setup() {
       .setColorValue(#ffffff)
         .setWidth(5);
   // cp5.addFrameRate().setInterval(10).setPosition(width - 20, height - 20 );
-  // arduino = new Serial(this, Serial.list()[4], 57600);
+  arduino = new Serial(this, Serial.list()[4], 57600);
   for (int i = 0; i < buttons.length; i++) {
     buttons[i] = new Button(buttonID[i]);
   }
@@ -114,6 +114,7 @@ void initGame() {
 
 void draw() {
   if (gameSelect) {
+    cursor();
     background(120);
     pushMatrix();
     popMatrix();
@@ -121,6 +122,7 @@ void draw() {
   }
   if (gamePlay) {
     background(120);
+    noCursor();
     if (dataFinishedLoading) {
       background(230);
       showUI(false);
@@ -129,7 +131,7 @@ void draw() {
         // button press code
         //for (int i = 0; i < buttons.length; i++) {
         // buttons[i].update();
-        if (mousePressed) {
+        if (buttons[8].held()) {
           downMult = 0.15;
           up += 0.55 * mult;
           mult += 0.11;
@@ -162,7 +164,7 @@ void draw() {
           fill(200, 150, 255);
           RG.shape(rect);
           checkCollisions(rect);
-          if (x + mx + 20 > width) { 
+          if (x + mx + 30 >= width) { 
             println("#win");
             gamePlay = false;
             gameSelect = true;
@@ -191,6 +193,7 @@ void checkCollisions(RShape r) {
   // if an intersection has occurred
   if (gps != null || cps != null) { 
     collision = true; // collision!
+    println("GAME OVER");
     gamePlay = false;
     gameSelect = true;
   }

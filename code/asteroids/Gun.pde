@@ -25,10 +25,10 @@ class Gun {
   }
 
   void moveX(float mx) {
-    x+=mx;
+    location.x+=mx;
   }
   void moveY(float my) {
-    y+=my;
+    location.y+=my;
   }
 
   PVector attract(Asteroid a) {
@@ -66,7 +66,7 @@ class Gun {
 
   void fire() {
     println((abs(a) % 360.));
-    bullets.add(new Bullet((x + (sin(r)*h/2)), (y + (cos(r)*-h/2)), (abs(a) % 360.)));
+    bullets.add(new Bullet((location.x + (sin(r)*h/2)), (location.y + (cos(r)*-h/2)), (abs(a) % 360.)));
   }
 
   ArrayList<Bullet> getBullets() {

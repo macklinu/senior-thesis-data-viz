@@ -16,12 +16,13 @@ class Ground extends Barrier {
   }
 
   void display() {
-    stroke(0);
+    // stroke(0);
+    noStroke();
     fill(160, 200, 100, 150);
     RG.shape(barrier);
     // textSize(20);
-    text(dates[offset], 20, height-30);
-    text(id, 20, height-10);
+    text(dates[offset], 10, height-30);
+    text(id, 10, height-10);
   }
 }
 

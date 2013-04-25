@@ -1,12 +1,16 @@
 /**
- * North American Music
+ * North American Music (demo)
  *
  * 2 Apr 2013
  * Digital Music Ensemble: University of Michigan, Ann Arbor
  * audio programming: Colin Fulton
  * visual programming: Macklin Underdown 
  *
- * Visualization for MICHIGAN
+ * Press 1 to create a sound orb for Illinois
+ * Press 2 for Michigan
+ * Press 3 for NY
+ *
+ * Sound propagates 50x faster than real time version
  *
  */
 

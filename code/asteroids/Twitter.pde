@@ -2,10 +2,10 @@
 // Twitter Streaming API class //
 /////////////////////////////////
 
-// This is where you enter your Oauth info
+// OAuth info
 static String OAuthConsumerKey = "oF0km6WmpgYkED3rZ8n9aQ";
 static String OAuthConsumerSecret = "iSJcMKfq3eTkTMOYV1uS96fTe1dFVHODasWUPNpszc";
-// This is where you enter your Access Token info
+// access token info
 static String AccessToken = "138650215-gPqoUNOKEaucxc4YOCVWpamhqDYLXx8dsoeFJbU3";
 static String AccessTokenSecret = "kNPONdyWCPFDLEYP0jfBgsW8FwFPYZBgVrEg01XzwI";
 
@@ -18,7 +18,7 @@ class Twitter {
   };
 
   TwitterStream twitter = new TwitterStreamFactory().getInstance();
-
+ 
   Twitter() {
     setup();
   }
@@ -44,13 +44,15 @@ class Twitter {
   // This listens for new tweet
   StatusListener listener = new StatusListener() {
     public void onStatus(Status status) {
+      /*
       println("--------");
       println("@" + status.getUser().getScreenName() + "\t" + status.getUser().getFollowersCount());
       println(status.getText() + "\n");
       println(status.isRetweet() + "\t" + status.getRetweetCount());
       println("--------");
-      String tweet = "@" + status.getUser().getScreenName() + " - " + status.getText();
-      if (tweet != null) asteroids.add(new Asteroid(random(200, width-200), random(200, height-200), status.getText().length(), tweet));
+      */
+      String tweet = "@" + status.getUser().getScreenName() + ":\n" + status.getText();
+      tempAsteroids.add(new Asteroid(random(0, width-250), random(0, height), status.getText().length(), tweet));
     }
 
     public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
@@ -71,6 +73,10 @@ class Twitter {
   void setKeywords(String s) {
     keywords[0] = s;
     twitter.filter(new FilterQuery().track(keywords));
+  }
+  
+  String getKeyword() {
+    return keywords[0];
   }
 }
 
