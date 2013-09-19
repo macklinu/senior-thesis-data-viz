@@ -2,4 +2,7 @@
 *.png
 *.jpg
 *.zip
+*.app
+*/application.macosx
+*.pdf
 code/*/build-tmp/
