@@ -5,4 +5,5 @@
 *.app
 */application.macosx
 *.pdf
-code/*
+macklinu_senior_thesis/all_code/asteroids/build-tmp/
+code/

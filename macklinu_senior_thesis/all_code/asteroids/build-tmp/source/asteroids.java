@@ -104,6 +104,7 @@ String textValue = "";
 String allTweets = "";
 boolean showSearchBox = false;
 int twitterBlue;
+PFont p;
 
 public void setup() {
   frame.setBackground(new java.awt.Color(20, 20, 20));
@@ -111,6 +112,7 @@ public void setup() {
   colorMode(HSB, 360);
   smooth();
   createUI();
+  p = loadFont("Roboto-Medium.vlw");
   if (SNESController) {
     println(Serial.list());
     arduino = new Serial(this, Serial.list()[4], 57600);
@@ -133,46 +135,46 @@ public void createUI() {
   // create text box that will contain tweets
   twitterBlue = color(207, 360*.80f, 360*.92f); // main blue color
   tweetArea = cp5.addTextarea("tweetArea")
-  .setPosition(width-250, 50)
-  .setSize(240, height-60)
-  .setLineHeight(14)
-  .setColor(color(235))
-  .setColorBackground(color(255, 175))
-  .setColorForeground(color(255, 175));
+    .setPosition(width-250, 50)
+      .setSize(240, height-60)
+        .setLineHeight(14)
+          .setColor(color(235))
+            .setColorBackground(color(255, 175))
+              .setColorForeground(color(255, 175));
   // when a search is conducted, this word will appear in blue to show the current search term
   keyword = cp5.addTextlabel("keyword")
-  .setPosition(width-250 + 25, 20)
-  .setColorValueLabel(twitterBlue);
+    .setPosition(width-250 + 25, 20)
+      .setColorValueLabel(twitterBlue);
   keyword.valueLabel().align(ControlP5.LEFT, ControlP5.CENTER);
   // create the Twitter icon button to open the search box
   PImage[] icons = {
     loadImage("twitter_16_off.jpg"), loadImage("twitter_16_rollover.jpg"), loadImage("twitter_16_on.jpg")
-  };
-  openTweetBox = cp5.addButton("openTweetBox")
-  .setImages(icons)
-  .setPosition(width-250+5, 20)
-  .updateSize();
+    };
+    openTweetBox = cp5.addButton("openTweetBox")
+      .setImages(icons)
+        .setPosition(width-250+5, 20)
+          .updateSize();
   cp5.addTextlabel("click to open search box")
-  .setPosition(60, 100)
-  .setColorValueLabel(twitterBlue);
+    .setPosition(60, 100)
+      .setColorValueLabel(twitterBlue);
   openTweetBox.captionLabel().hide();
   // create the search box
   search = cp5.addTextfield("search")
-  .setPosition(width-250 + 25, 18)
-  .setSize(125, 20)
-  .setColorBackground(color(60)) 
-  .setColorActive(twitterBlue) 
-  .setColorForeground(color(60))
-  .setAutoClear(true);
+    .setPosition(width-250 + 25, 18)
+      .setSize(125, 20)
+        .setColorBackground(color(60)) 
+          .setColorActive(twitterBlue) 
+            .setColorForeground(color(60))
+              .setAutoClear(true);
   search.captionLabel().hide();
   // the "SEARCH" button
   conductSearch = cp5.addBang("conductSearch")
-  .setPosition(search.getPosition().x + search.getWidth() + 10, search.getPosition().y)
-  .setSize(50, 20);
+    .setPosition(search.getPosition().x + search.getWidth() + 10, search.getPosition().y)
+      .setSize(50, 20);
   conductSearch.captionLabel()
-  .setText("search")
-  .setFont(searchFont)
-  .align(ControlP5.CENTER, ControlP5.CENTER);  
+    .setText("search")
+      .setFont(searchFont)
+        .align(ControlP5.CENTER, ControlP5.CENTER);
 }
 
 public void draw() {
@@ -190,12 +192,21 @@ public void draw() {
     tweetArea.hide();
     conductSearch.hide();
     textAlign(CENTER);
+    textFont(p);
+    textSize(14);
     text("Asteroids", width/2, height/2-50);
     text("A Twitter visualization", width/2, height/2 + 20 -50);
-    if (SNESController) text("Press START to begin", width/2, height/2);
-    else text("Click the mouse to begin", width/2, height/2);
     if (SNESController) { 
-      if (buttons[3].clicked()) introScreen = false; 
+      text("Press START to begin", width/2, height/2);
+    }
+    else { 
+      text("Click the mouse to begin", width/2, height/2);
+      text("wasd - up / left / down / right", width/2, height/2 +40);
+      text("jk - rotate gun", width/2, height/2+60);
+      text("spacebar - fire gun", width/2, height/2+80);
+    }
+    if (SNESController) { 
+      if (buttons[3].clicked()) introScreen = false;
     }
   }
   if (!introScreen) {
@@ -275,11 +286,11 @@ public void mousePressed() {
 }
 
 public void keyPressed() {
-  if (key == '=') saveFrame("screenshots/"+timestamp()+".png");
+  // if (key == '=') saveFrame("screenshots/"+timestamp()+".png");
   if (!search.isActive()) {
     if (!SNESController) { 
       if (key == ' ') { 
-        gun.fire(); // fire the gun 
+        gun.fire(); // fire the gun
       }
     }
   }
@@ -352,14 +363,15 @@ public void serialEvent(Serial arduino) {
 
 public String timestamp() {
   String currentTime = str(year()) 
-  + nf(month(), 2)
-  + nf(day(), 2)
-  + "_"
-  + nf(hour(), 2)
-  + nf(minute(), 2)
-  + nf(second(), 2);
+    + nf(month(), 2)
+      + nf(day(), 2)
+        + "_"
+          + nf(hour(), 2)
+          + nf(minute(), 2)
+            + nf(second(), 2);
   return currentTime;
 }
+
 class Asteroid {
   PVector location;
   PVector velocity;
@@ -546,16 +558,16 @@ class Gun {
   }
 
   public void rot(float a) {
-    this.a+=a;
+    this.a += a;
     if (this.a > 360) this.a %= 360.f;
     if (this.a < 0) this.a += 360.f;
   }
 
   public void moveX(float mx) {
-    location.x+=mx;
+    location.x += mx;
   }
   public void moveY(float my) {
-    location.y+=my;
+    location.y += my;
   }
 
   public PVector attract(Asteroid a) {
@@ -611,40 +623,42 @@ class Keyboard {
   final static int L = 16;
   final static int R = 32;
   int result;
+  int amt;
 
   Keyboard() {
     result = 0;
+    amt = 2;
   }
 
   public void check(Gun gun) {
     switch(result) {
       case NORTH: 
-      gun.moveY(-2); 
+      gun.moveY(-amt); 
       break;
       case EAST: 
-      gun.moveX(2); 
+      gun.moveX(amt); 
       break;
       case SOUTH: 
-      gun.moveY(2); 
+      gun.moveY(amt); 
       break;
       case WEST: 
-      gun.moveX(-2); 
+      gun.moveX(-amt); 
       break;
       case NORTH|EAST: 
-      gun.moveY(-2); 
-      gun.moveX(2); 
+      gun.moveY(-amt); 
+      gun.moveX(amt); 
       break;
       case NORTH|WEST: 
-      gun.moveY(-2); 
-      gun.moveX(-2); 
+      gun.moveY(-amt); 
+      gun.moveX(-amt); 
       break;
       case SOUTH|EAST: 
-      gun.moveY(2); 
-      gun.moveX(2); 
+      gun.moveY(amt); 
+      gun.moveX(amt); 
       break;
       case SOUTH|WEST: 
-      gun.moveY(2); 
-      gun.moveX(-2); 
+      gun.moveY(amt); 
+      gun.moveX(-amt); 
       break;
       case L: 
       gun.rot(-PI); 
@@ -790,7 +804,7 @@ class Twitter {
 }
 
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "--full-screen", "--bgcolor=#666666", "--stop-color=#cccccc", "asteroids" };
+    String[] appletArgs = new String[] { "asteroids" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {

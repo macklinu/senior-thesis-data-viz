@@ -18,16 +18,16 @@ class Gun {
   }
 
   void rot(float a) {
-    this.a+=a;
+    this.a += a;
     if (this.a > 360) this.a %= 360.;
     if (this.a < 0) this.a += 360.;
   }
 
   void moveX(float mx) {
-    location.x+=mx;
+    location.x += mx;
   }
   void moveY(float my) {
-    location.y+=my;
+    location.y += my;
   }
 
   PVector attract(Asteroid a) {

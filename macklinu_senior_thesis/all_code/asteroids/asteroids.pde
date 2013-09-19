@@ -162,10 +162,10 @@ void draw() {
       // rotate gun
       if (SNESController) { 
         if (buttons[8].clicked()) gun.fire();
-        if (buttons[4].held()) gun.moveY(-1); 
-        if (buttons[7].held()) gun.moveX(1); 
-        if (buttons[5].held()) gun.moveY(1); 
-        if (buttons[6].held()) gun.moveX(-1); 
+        if (buttons[4].held()) gun.moveY(-gun.amt); 
+        if (buttons[7].held()) gun.moveX(gun.amt); 
+        if (buttons[5].held()) gun.moveY(gun.amt); 
+        if (buttons[6].held()) gun.moveX(-gun.amt); 
         if (buttons[10].held()) gun.rot(-PI);
         if (buttons[11].held()) gun.rot(PI);
       }
@@ -182,7 +182,7 @@ void draw() {
     List<Bullet> activeBullets = gun.getBullets(); // current on-screen bullets
     List<Asteroid> deadAsteroids = new ArrayList<Asteroid>(); // temp dead asteroid pool
     List<Bullet> deadBullets = new ArrayList<Bullet>(); // temp dead bullet pool
-    while (it.hasNext ()) { // while there are asteroids
+    while (it.hasNext()) { // while there are asteroids
       Asteroid a = it.next(); // a = the asteroid we're looking at
       // check each bullet for collisions
       for (Bullet b : activeBullets) {

@@ -7,40 +7,42 @@ class Keyboard {
   final static int L = 16;
   final static int R = 32;
   int result;
+  int amt;
 
   Keyboard() {
     result = 0;
+    amt = 2;
   }
 
   void check(Gun gun) {
     switch(result) {
       case NORTH: 
-      gun.moveY(-2); 
+      gun.moveY(-amt); 
       break;
       case EAST: 
-      gun.moveX(2); 
+      gun.moveX(amt); 
       break;
       case SOUTH: 
-      gun.moveY(2); 
+      gun.moveY(amt); 
       break;
       case WEST: 
-      gun.moveX(-2); 
+      gun.moveX(-amt); 
       break;
       case NORTH|EAST: 
-      gun.moveY(-2); 
-      gun.moveX(2); 
+      gun.moveY(-amt); 
+      gun.moveX(amt); 
       break;
       case NORTH|WEST: 
-      gun.moveY(-2); 
-      gun.moveX(-2); 
+      gun.moveY(-amt); 
+      gun.moveX(-amt); 
       break;
       case SOUTH|EAST: 
-      gun.moveY(2); 
-      gun.moveX(2); 
+      gun.moveY(amt); 
+      gun.moveX(amt); 
       break;
       case SOUTH|WEST: 
-      gun.moveY(2); 
-      gun.moveX(-2); 
+      gun.moveY(amt); 
+      gun.moveX(-amt); 
       break;
       case L: 
       gun.rot(-PI); 
