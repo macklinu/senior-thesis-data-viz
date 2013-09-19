@@ -5,4 +5,4 @@
 *.app
 */application.macosx
 *.pdf
-code/*/build-tmp/
+code/*
