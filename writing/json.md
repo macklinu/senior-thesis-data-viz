@@ -186,7 +186,7 @@ import org.json.*;
 ~~~
 
 #### try...catch
-I had my first encounter with the `try` and `catch` keywords in Processing. I don't quite understand what they mean, but I have a feeling it might be useful to know moving forward with using JSON/XML in Processing. From the Processing [website](http://processing.org/reference/try.html):
+I had my first encounter with the `try` and `catch` keywords in Processing. From the Processing [website](http://processing.org/reference/try.html):
 > The `try` keyword is used with `catch` to handle exceptions. Sun's Java documentation defines an exception as "an event, which occurs during the execution of a program, that disrupts the normal flow of the program's instructions." This could be, for example, an error while a file is read.
 
 And a code example from the same page:
